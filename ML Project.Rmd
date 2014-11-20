@@ -1,0 +1,71 @@
+---
+title: "Machine learning Project"
+author: "tvjoseph"
+date: "Thursday, November 20, 2014"
+output: html_document
+---
+
+### Executive Summary
+
+The goal of this exercise is to build a prediction model, to describe the methodology for building the prediction model and also test the prediction model in various test sets.
+
+### Loading the data
+The data is loaded as follows
+
+```{r}
+library(caret)
+train <- read.csv("pml-training.csv")
+test <- read.csv("pml-testing.csv")
+
+
+```
+
+### Carrying out data cleaning
+
+All variables with more than 40% NA values are excluded from the model and a new training variable called newtrain is intoduced.
+
+```{r}
+
+newtrain <- train[,c(1,2,3,4,5,6,7, 8, 9 ,  10 , 11,  37 , 38,  39,  40,  41,  42 , 43 , 44,  45,  46,  47 , 48 , 49, 60 , 61,  62 , 63 , 64 , 65 , 66 , 67 , 68 , 84,  85 , 86 ,102, 113, 114, 115 ,116, 117, 118, 119, 120, 121, 122, 123,124, 140, 151, 152, 153 ,154, 155 ,156, 157, 158, 159, 160)]
+
+```
+
+#### Partitioning the training data set
+
+The approach which will be adopted in this exercise is to partition the training data into training and test sets. The model would be first tested on the partitioned data and then it would finally be tested on to the seperate test data set.
+
+```{r}
+intrain <- createDataPartition(y=newtrain$classe,p=0.7,list=FALSE)
+training <- newtrain[intrain,]
+testing <- newtrain[-intrain,]
+
+
+```
+
+#### Fitting the Tree Model and validation with testing data
+
+```{r,cache=TRUE}
+
+modelfit1 <- train(training$classe ~ .,method="rpart",data=training)
+
+Prediction <- predict(modelfit1,newdata=testing)
+
+modelfit1
+
+
+```
+
+#### Cross validating the prediction model
+
+The prediction model has an accuracy of 73%. This can be cross validated as follows
+
+```{r}
+
+table(Prediction,testing$classe)
+
+
+```
+
+From the cross validation the accuracy rate is found to be around 66%
+
+
